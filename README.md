@@ -33,6 +33,8 @@ EVM类(evm为实例化对象)
 
 反编译bytecode为evm汇编。
 
+![image-20230911173139105](/img/image-20230911173139105.png)
+
 ### evm.analyse(bytecode) TODO
 
 分析字节码的函数块，入口信息
