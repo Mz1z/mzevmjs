@@ -5,7 +5,7 @@ typora-copy-images-to: img
 
 # MzEVMJS
 
-基于js的evm虚拟机。
+基于js的evm虚拟机环境和反编译工具。
 
 > start data: 2023/9/11
 
