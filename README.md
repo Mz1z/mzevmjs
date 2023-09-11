@@ -9,3 +9,9 @@ typora-copy-images-to: img
 
 > start data: 2023/9/11
 
+
+
+```
+core/emvjs.js      # EVM类，用于加载和执行bytecode
+```
+

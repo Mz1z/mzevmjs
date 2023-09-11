@@ -1,6 +1,6 @@
 const EVM = require("./core/evmjs");
 
 
-var evm = new EVM("0x12123123123123123");
+var evm = new EVM();
 console.log(evm)
 evm.run()

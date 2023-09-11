@@ -1,0 +1,22 @@
+{
+  "name": "mzevmjs",
+  "version": "1.0.0",
+  "description": "a evm environment by js",
+  "main": "test.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mz1z/mzevmjs.git"
+  },
+  "keywords": [
+    "evm"
+  ],
+  "author": "Mz1",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mz1z/mzevmjs/issues"
+  },
+  "homepage": "https://github.com/Mz1z/mzevmjs#readme"
+}
