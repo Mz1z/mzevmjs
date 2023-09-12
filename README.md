@@ -7,6 +7,8 @@ typora-copy-images-to: img
 
 基于js的evm虚拟机环境和反编译工具。
 
+**由于已经有相应的js evm解释器了，所以功能侧重点在反汇编和反编译上，虚拟机环境可能不会完成**
+
 > start data: 2023/9/11
 
 
@@ -24,6 +26,12 @@ core/emvjs.js      # EVM类，用于加载和执行bytecode，可以反编译byt
 ## 文档
 
 EVM类(evm为实例化对象)
+
+### evm.decompile(bytecode)
+
+反编译bytecode为evm汇编。
+
+![image-20230911173139105](/img/image-20230911173139105.png)
 
 ### evm.run()    TODO
 
@@ -46,12 +54,6 @@ LT
 ```
 
 
-
-### evm.decompile(bytecode)
-
-反编译bytecode为evm汇编。
-
-![image-20230911173139105](/img/image-20230911173139105.png)
 
 ### evm.analyse(bytecode) TODO
 
