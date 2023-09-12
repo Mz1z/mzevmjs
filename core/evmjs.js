@@ -9,15 +9,31 @@ class EVM{
 		};
 		Object.assign(this.env, env);     // combine env
 		Object.assign(this.setting, setting)// combine setting
-		this.stack = [];         // call stack
+		this.vm = { 
+			stack: [],          // call stack
+			storage: [],
+			memory: [],
+			pc: 0,
+			status: "wait",    // wait, run, end, error
+		}       
 		this.bytecode = null;
-		this.storage = [];
+
 		// load opcodes
 		/*
 		op: name of opcode
 		argsize: size used next to opcode
 		func: which subfunction to call
 		*/
+		let that = this;
+		// uniform func for PUSHXX
+		this._push_func = function(argsize){
+			that.vm.stack.push(
+				that.bytecode.substring(
+					(that.vm.pc+1)*2, (that.vm.pc+1+argsize)*2
+					)
+				);
+			that.vm.pc += 1 +argsize;
+		}
 		this.opcode = {
 			'10': { op: 'LT', argsize: 0, func: null },
 			'11': { op: 'GT', argsize: 0, func: null },
@@ -59,26 +75,66 @@ class EVM{
 			'57': { op: 'JUMPI', argsize: 0, func: null },
 			'58': { op: 'PC', argsize: 0, func: null },
 			'59': { op: 'MSIZE', argsize: 0, func: null },
-			'60': { op: 'PUSH1', argsize: 1, func: null },
-			'61': { op: 'PUSH2', argsize: 2, func: null },
-			'62': { op: 'PUSH3', argsize: 3, func: null },
-			'63': { op: 'PUSH4', argsize: 4, func: null },
-			'64': { op: 'PUSH5', argsize: 5, func: null },
-			'65': { op: 'PUSH6', argsize: 6, func: null },
-			'66': { op: 'PUSH7', argsize: 7, func: null },
-			'67': { op: 'PUSH8', argsize: 8, func: null },
-			'68': { op: 'PUSH9', argsize: 9, func: null },
-			'69': { op: 'PUSH10', argsize: 10, func: null },
-			'70': { op: 'PUSH17', argsize: 17, func: null },
-			'71': { op: 'PUSH18', argsize: 18, func: null },
-			'72': { op: 'PUSH19', argsize: 19, func: null },
-			'73': { op: 'PUSH20', argsize: 20, func: null },
-			'74': { op: 'PUSH21', argsize: 21, func: null },
-			'75': { op: 'PUSH22', argsize: 22, func: null },
-			'76': { op: 'PUSH23', argsize: 23, func: null },
-			'77': { op: 'PUSH24', argsize: 24, func: null },
-			'78': { op: 'PUSH25', argsize: 25, func: null },
-			'79': { op: 'PUSH26', argsize: 26, func: null },
+			'60': { op: 'PUSH1', argsize: 1, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'61': { op: 'PUSH2', argsize: 2, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'62': { op: 'PUSH3', argsize: 3, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'63': { op: 'PUSH4', argsize: 4, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'64': { op: 'PUSH5', argsize: 5, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'65': { op: 'PUSH6', argsize: 6, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'66': { op: 'PUSH7', argsize: 7, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'67': { op: 'PUSH8', argsize: 8, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'68': { op: 'PUSH9', argsize: 9, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'69': { op: 'PUSH10', argsize: 10, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'70': { op: 'PUSH17', argsize: 17, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'71': { op: 'PUSH18', argsize: 18, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'72': { op: 'PUSH19', argsize: 19, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'73': { op: 'PUSH20', argsize: 20, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'74': { op: 'PUSH21', argsize: 21, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'75': { op: 'PUSH22', argsize: 22, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'76': { op: 'PUSH23', argsize: 23, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'77': { op: 'PUSH24', argsize: 24, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'78': { op: 'PUSH25', argsize: 25, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'79': { op: 'PUSH26', argsize: 26, func: function(){
+				that._push_func(this.argsize);
+			} },
 			'80': { op: 'DUP1', argsize: 0, func: null },
 			'81': { op: 'DUP2', argsize: 0, func: null },
 			'82': { op: 'DUP3', argsize: 0, func: null },
@@ -99,7 +155,10 @@ class EVM{
 			'97': { op: 'SWAP8', argsize: 0, func: null },
 			'98': { op: 'SWAP9', argsize: 0, func: null },
 			'99': { op: 'SWAP10', argsize: 0, func: null },
-			'00': { op: 'STOP', argsize: 0, func: null },
+			'00': { op: 'STOP', argsize: 0, func: function(){
+				that.vm.pc += 1;
+				that.vm.status = 'stop';
+			} },
 			'01': { op: 'ADD', argsize: 0, func: null },
 			'02': { op: 'MUL', argsize: 0, func: null },
 			'03': { op: 'SUB', argsize: 0, func: null },
@@ -124,18 +183,42 @@ class EVM{
 			'5a': { op: 'GAS', argsize: 0, func: null },
 			'5b': { op: 'JUMPDEST', argsize: 0, func: null },
 			'5f': { op: 'PUSH0', argsize: 0, func: null },
-			'6a': { op: 'PUSH11', argsize: 11, func: null },
-			'6b': { op: 'PUSH12', argsize: 12, func: null },
-			'6c': { op: 'PUSH13', argsize: 13, func: null },
-			'6d': { op: 'PUSH14', argsize: 14, func: null },
-			'6e': { op: 'PUSH15', argsize: 15, func: null },
-			'6f': { op: 'PUSH16', argsize: 16, func: null },
-			'7a': { op: 'PUSH27', argsize: 27, func: null },
-			'7b': { op: 'PUSH28', argsize: 28, func: null },
-			'7c': { op: 'PUSH29', argsize: 29, func: null },
-			'7d': { op: 'PUSH30', argsize: 30, func: null },
-			'7e': { op: 'PUSH31', argsize: 31, func: null },
-			'7f': { op: 'PUSH32', argsize: 32, func: null },
+			'6a': { op: 'PUSH11', argsize: 11, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'6b': { op: 'PUSH12', argsize: 12, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'6c': { op: 'PUSH13', argsize: 13, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'6d': { op: 'PUSH14', argsize: 14, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'6e': { op: 'PUSH15', argsize: 15, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'6f': { op: 'PUSH16', argsize: 16, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'7a': { op: 'PUSH27', argsize: 27, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'7b': { op: 'PUSH28', argsize: 28, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'7c': { op: 'PUSH29', argsize: 29, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'7d': { op: 'PUSH30', argsize: 30, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'7e': { op: 'PUSH31', argsize: 31, func: function(){
+				that._push_func(this.argsize);
+			} },
+			'7f': { op: 'PUSH32', argsize: 32, func: function(){
+				that._push_func(this.argsize);
+			} },
 			'8a': { op: 'DUP11', argsize: 0, func: null },
 			'8b': { op: 'DUP12', argsize: 0, func: null },
 			'8c': { op: 'DUP13', argsize: 0, func: null },
@@ -169,7 +252,26 @@ class EVM{
 	// run bytecode
 	run(){
 		this._output("> run!");
-		
+		this.bytecode = this._hexstr(this.bytecode);
+		console.log(this.bytecode);
+		this.vm.status = 'run';
+		while(this.vm.status !== 'stop' && this.vm.status !== 'error'){
+			let op = this.bytecode.substring(this.vm.pc*2, (this.vm.pc+1)*2);   // get opcode
+			console.log(`[${hex(this.vm.pc)}]`);
+			console.log(this.opcode[op]);
+			this.opcode[op].func();     // execute code
+			console.log(this.vm);
+		}
+		this._output("============================================");
+		this._output("> end! vm status:");
+		this._output(this.vm);
+		this._output("============================================");
+	}
+
+	// debug bytecode
+	debug(){
+		this._output("> debug!");
+
 	}
 
 	load_bytecode(bytecode){
@@ -200,7 +302,7 @@ class EVM{
 			let _opcode = _bytecode.substring(index, index+2);
 			try{
 				this._output(
-					`[0x${(index/2).toString(16)}] ${this.opcode[_opcode].op}    ` +
+					`[${hex(index/2)}] ${this.opcode[_opcode].op}    ` +
 					`${_bytecode.substring(index+2, index+2+2*this.opcode[_opcode].argsize)}`
 					);
 				index += 2 + 2*this.opcode[_opcode].argsize;
@@ -229,6 +331,10 @@ class EVM{
 		return false;
 	}
 }
+
+const hex = function(num){
+	return "0x"+num.toString(16);
+};
 
 module.exports = EVM;
 
