@@ -35,6 +35,14 @@ PUSHXX
 ADD
 MUL
 SUB
+DIV      待区分有无符号
+SDIV    待区分有无符号
+MOD      待区分有无符号
+SMOD      待区分有无符号
+ADDMOD     待测试
+MULMOD     待测试
+EXP
+LT
 ```
 
 

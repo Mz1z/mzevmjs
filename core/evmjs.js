@@ -19,12 +19,8 @@ class EVM{
 		}       
 		this.bytecode = null;
 
-		// load opcodes
-		/*
-		op: name of opcode
-		argsize: size used next to opcode
-		func: which subfunction to call
-		*/
+		
+		
 		let that = this;
 		// uniform func for PUSHXX
 		this._push_func = function(argsize){
@@ -35,8 +31,28 @@ class EVM{
 				);
 			that.vm.pc += 1 +argsize;
 		}
+		// get nums from stack
+		this._getNstacknum = function(n){
+			let _list = [];
+			for(let i = 0; i < n; i ++){
+				_list.push(parseInt(that.vm.stack.pop(), 16));
+			}
+			return _list;
+		}
+
+		/*
+		opcodes
+		op: name of opcode
+		argsize: size used next to opcode
+		func: which subfunction to call
+		*/
 		this.opcode = {
-			'10': { op: 'LT', argsize: 0, func: null },
+			'10': { op: 'LT', argsize: 0, func: function(){
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
+				that.vm.stack.push((num1<num2 ? 1 : 0).toString(16));
+				that.vm.pc += 1;
+			} },
 			'11': { op: 'GT', argsize: 0, func: null },
 			'12': { op: 'SLT', argsize: 0, func: null },
 			'13': { op: 'SGT', argsize: 0, func: null },
@@ -161,30 +177,65 @@ class EVM{
 				that.vm.status = 'stop';
 			} },
 			'01': { op: 'ADD', argsize: 0, func: function(){
-				let num1 = parseInt(that.vm.stack.pop(), 16);
-				let num2 = parseInt(that.vm.stack.pop(), 16);
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
 				that.vm.stack.push((num1+num2).toString(16));
 				that.vm.pc += 1;
 			} },
 			'02': { op: 'MUL', argsize: 0, func: function(){
-				let num1 = parseInt(that.vm.stack.pop(), 16);
-				let num2 = parseInt(that.vm.stack.pop(), 16);
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
 				that.vm.stack.push((num1*num2).toString(16));
 				that.vm.pc += 1;
 			} },
 			'03': { op: 'SUB', argsize: 0, func: function(){
-				let num1 = parseInt(that.vm.stack.pop(), 16);
-				let num2 = parseInt(that.vm.stack.pop(), 16);
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
 				that.vm.stack.push((num1-num2).toString(16));
 				that.vm.pc += 1;
 			} },
-			'04': { op: 'DIV', argsize: 0, func: null },
-			'05': { op: 'SDIV', argsize: 0, func: null },
-			'06': { op: 'MOD', argsize: 0, func: null },
-			'07': { op: 'SMOD', argsize: 0, func: null },
-			'08': { op: 'ADDMOD', argsize: 0, func: null },
-			'09': { op: 'MULMOD', argsize: 0, func: null },
-			'0a': { op: 'EXP', argsize: 0, func: null },
+			'04': { op: 'DIV', argsize: 0, func: function(){
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
+				that.vm.stack.push((Math.floor(num1/num2)).toString(16));
+				that.vm.pc += 1;
+			} },
+			'05': { op: 'SDIV', argsize: 0, func: function(){
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
+				that.vm.stack.push((Math.floor(num1/num2)).toString(16));
+				that.vm.pc += 1;
+			} },
+			'06': { op: 'MOD', argsize: 0, func: function(){
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
+				that.vm.stack.push((num1%num2).toString(16));
+				that.vm.pc += 1;
+			} },
+			'07': { op: 'SMOD', argsize: 0, func: function(){
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
+				that.vm.stack.push((num1%num2).toString(16));
+				that.vm.pc += 1;
+			} },
+			'08': { op: 'ADDMOD', argsize: 0, func: function(){
+				let num1, num2, num3;
+				[num1, num2, num3] = that._getNstacknum(3);
+				that.vm.stack.push(((num1+num2)%num3).toString(16));
+				that.vm.pc += 1;
+			} },
+			'09': { op: 'MULMOD', argsize: 0, func: function(){
+				let num1, num2, num3;
+				[num1, num2, num3] = that._getNstacknum(3);
+				that.vm.stack.push(((num1*num2)%num3).toString(16));
+				that.vm.pc += 1;
+			} },
+			'0a': { op: 'EXP', argsize: 0, func: function(){
+				let num1, num2;
+				[num1, num2] = that._getNstacknum(2);
+				that.vm.stack.push((num1**num2).toString(16));
+				that.vm.pc += 1;
+			} },
 			'0b': { op: 'SIGNEXTEND', argsize: 0, func: null },
 			'1a': { op: 'BYTE', argsize: 0, func: null },
 			'1b': { op: 'SHL', argsize: 0, func: null },
