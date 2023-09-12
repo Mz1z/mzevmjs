@@ -15,6 +15,7 @@ class EVM{
 			memory: [],
 			pc: 0,
 			status: "wait",    // wait, run, end, error
+			return_value: null,
 		}       
 		this.bytecode = null;
 
@@ -159,9 +160,24 @@ class EVM{
 				that.vm.pc += 1;
 				that.vm.status = 'stop';
 			} },
-			'01': { op: 'ADD', argsize: 0, func: null },
-			'02': { op: 'MUL', argsize: 0, func: null },
-			'03': { op: 'SUB', argsize: 0, func: null },
+			'01': { op: 'ADD', argsize: 0, func: function(){
+				let num1 = parseInt(that.vm.stack.pop(), 16);
+				let num2 = parseInt(that.vm.stack.pop(), 16);
+				that.vm.stack.push((num1+num2).toString(16));
+				that.vm.pc += 1;
+			} },
+			'02': { op: 'MUL', argsize: 0, func: function(){
+				let num1 = parseInt(that.vm.stack.pop(), 16);
+				let num2 = parseInt(that.vm.stack.pop(), 16);
+				that.vm.stack.push((num1*num2).toString(16));
+				that.vm.pc += 1;
+			} },
+			'03': { op: 'SUB', argsize: 0, func: function(){
+				let num1 = parseInt(that.vm.stack.pop(), 16);
+				let num2 = parseInt(that.vm.stack.pop(), 16);
+				that.vm.stack.push((num1-num2).toString(16));
+				that.vm.pc += 1;
+			} },
 			'04': { op: 'DIV', argsize: 0, func: null },
 			'05': { op: 'SDIV', argsize: 0, func: null },
 			'06': { op: 'MOD', argsize: 0, func: null },

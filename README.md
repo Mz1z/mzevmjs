@@ -15,7 +15,7 @@ typora-copy-images-to: img
 core/emvjs.js      # EVM类，用于加载和执行bytecode，可以反编译bytecode
 ```
 
-
+目前还需要增加对大整数的处理2^256。
 
 
 
@@ -28,6 +28,16 @@ EVM类(evm为实例化对象)
 ### evm.run()    TODO
 
 运行机器码，输出最终的栈帧。
+
+```
+目前完成指令
+PUSHXX
+ADD
+MUL
+SUB
+```
+
+
 
 ### evm.decompile(bytecode)
 
